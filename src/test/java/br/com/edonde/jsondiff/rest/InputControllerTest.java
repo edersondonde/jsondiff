@@ -28,38 +28,42 @@ public class InputControllerTest {
     /**
      * Given a REST interface<br>
      * When I send a post request to /v1/diff/&lt;id&gt;/left<br>
-     * Then I should receive a response with status ok and a dummy answer.
+     * Then I should receive a response with status ok and the input plus the id as content.
      *
      * @throws Exception if an error happens during request
      */
     @Test
     public void testPostLeft() throws Exception {
         String id = "id123";
-        String content = "PostContent";
+        String encodedContent = "VGVzdERhdGE=";
+        String postContent = "{\"inputString\":\""+encodedContent+"\"}";
+        String responseContent = "{\"id\":\""+id+"\",\"inputString\":\""+encodedContent+"\"}";
         mvc.perform(MockMvcRequestBuilders.post("/v1/diff/"+id+"/left")
-           .content(content)
+           .content(postContent)
            .contentType(MediaType.APPLICATION_JSON)
            .accept(MediaType.APPLICATION_JSON))
            .andExpect(status().isOk())
-           .andExpect(content().string(equalTo("Received id="+id+" and body="+content)));
+           .andExpect(content().string(equalTo(responseContent)));
     }
 
     /**
      * Given a REST interface<br>
      * When I send a post request to /v1/diff/&lt;id&gt;/right<br>
-     * Then I should receive a response with status ok and a dummy answer.
+     * Then I should receive a response with status ok and the input plus the id as content.
      *
      * @throws Exception if an error happens during request
      */
     @Test
     public void testPostRight() throws Exception {
         String id = "id123";
-        String content = "PostContent";
+        String encodedContent = "VGVzdERhdGE=";
+        String postContent = "{\"inputString\":\""+encodedContent+"\"}";
+        String responseContent = "{\"id\":\""+id+"\",\"inputString\":\""+encodedContent+"\"}";
         mvc.perform(MockMvcRequestBuilders.post("/v1/diff/"+id+"/right")
-           .content(content)
+           .content(postContent)
            .contentType(MediaType.APPLICATION_JSON)
            .accept(MediaType.APPLICATION_JSON))
            .andExpect(status().isOk())
-           .andExpect(content().string(equalTo("Received id="+id+" and body="+content)));
+           .andExpect(content().string(equalTo(responseContent)));
     }
 }

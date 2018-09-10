@@ -39,9 +39,7 @@ public class Base64SerializerTest {
         Base64Serializer serializer = new Base64Serializer();
         serializer.serialize(value, gen, serializers);
 
-        Mockito.verify(gen).writeStartObject();
         Mockito.verify(gen).writeString(expectedValueEncoded);
-        Mockito.verify(gen).writeEndObject();
     }
 
 }

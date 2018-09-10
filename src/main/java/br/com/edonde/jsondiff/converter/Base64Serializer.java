@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 /**
- * Base64 Encoder for string
+ * Base64 Serializer for String
  */
 public class Base64Serializer extends StdSerializer<String>{
 
@@ -26,9 +26,7 @@ public class Base64Serializer extends StdSerializer<String>{
     @Override
     public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         String valueEncoded = Base64Utils.encodeToString(value.getBytes("UTF-8"));
-        gen.writeStartObject();
         gen.writeString(valueEncoded);
-        gen.writeEndObject();
     }
 
 }

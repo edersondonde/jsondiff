@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 /**
- * Base64 decoder for String
+ * Base64 deserializer for String
  */
 public class Base64Deserializer extends StdDeserializer<String>{
 
@@ -23,7 +23,6 @@ public class Base64Deserializer extends StdDeserializer<String>{
 
     protected Base64Deserializer(Class<?> vc) {
         super(vc);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
