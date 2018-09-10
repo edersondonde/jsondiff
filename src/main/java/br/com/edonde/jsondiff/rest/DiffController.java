@@ -2,15 +2,13 @@ package br.com.edonde.jsondiff.rest;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.edonde.jsondiff.controller.DiffCalculatorService;
-import br.com.edonde.jsondiff.model.Diff;
+import br.com.edonde.jsondiff.model.DiffElement;
 import br.com.edonde.jsondiff.model.Response;
 
 /**
@@ -24,12 +22,13 @@ public class DiffController {
 
     @RequestMapping(value="/v1/diff/{id}", method=GET)
     public Response getDiffResult(@PathVariable String id) {
-        List<Diff> diffs = diffCalculator.getDiff(id);
-        String inputLeft = diffCalculator.getLeft(id);
+        DiffElement diff = diffCalculator.getDiff(id);
         Response response = new Response();
         response.setId(id);
-        response.setInputLeft(inputLeft);
-        response.setDiffs(diffs);
+        response.setInputLeft(diff.getLeft());
+        response.setInputRight(diff.getRight());
+        response.setDiffs(diff.getDiffs());
+        response.setDiffResult(diff.getDiffResult());
         return response;
     }
 

@@ -10,6 +10,7 @@ import br.com.edonde.jsondiff.exceptions.DiffNotFoundException;
 import br.com.edonde.jsondiff.exceptions.MissingDiffInputException;
 import br.com.edonde.jsondiff.model.Diff;
 import br.com.edonde.jsondiff.model.DiffElement;
+import br.com.edonde.jsondiff.model.DiffElement.DiffResult;
 
 /**
  * Main class to process the differences between the inputs.
@@ -41,18 +42,74 @@ public class DiffCalculatorService {
             diffElement.setRight(json);
         }
         if (diffElement.areBothSidesSet()) {
-            calculateDiff(diffElement);
+            List<Diff> diffs = calculateDiff(diffElement.getLeft(), diffElement.getRight());
+            DiffResult diffResult = retrieveDiffResult(diffElement.getLeft(), diffElement.getRight());
+            diffElement.setDiffs(diffs);
+            diffElement.setDiffResult(diffResult);
         }
         diffElements.putIfAbsent(id, diffElement);
     }
 
     /**
+     * Retrieve the diff result between the inputs.
+     * <br>
+     * <ul>
+     * <li>If the inputs are equal, {@link DiffResult#EQUAL} is returned;</li>
+     * <li>If the inputs are of different size, {@link DiffResult#DIFFERENT_SIZES} is returned;</li>
+     * <li>If the inputs are of same size and different contents, {@link DiffResult#DIFFERENT_CONTENTS} is returned;</li>
+     *
+     * @param left The left string to be diff'ed.
+     * @param right The right string to be diff'ed.
+     * @return The {@link DiffResult} representing the difference between the inputs.
+     */
+    DiffResult retrieveDiffResult(String left, String right) {
+        if(left.equals(right)) {
+            return DiffResult.EQUAL;
+        } if (left.length() != right.length()) {
+            return DiffResult.DIFFERENT_SIZES;
+        }
+        return DiffResult.DIFFERENT_CONTENTS;
+    }
+
+    /**
      * Executes the calculation of the diff between the elements.
      *
-     * @param diffElement The element to calculate the diff.
+     * @param left The left string to be diff'ed.
+     * @param right The right string to be diff'ed.
+     * @return List of {@link Diff} objects. Empty List if no differences were found.
      */
-    private void calculateDiff(DiffElement diffElement) {
-        diffElement.setDiffs(new ArrayList<>());
+    List<Diff> calculateDiff(String left, String right) {
+        List<Diff> diffs = new ArrayList<>();
+
+        if (left.equals(right) || left.length() != right.length()) {
+            return diffs;
+        }
+
+        int offset = 0;
+        int length = 0;
+        boolean differenceFound = false;
+        Diff diff;
+        for (int i = 0; i < left.length(); ++i) {
+            if (!differenceFound) {
+                if (left.charAt(i) != right.charAt(i)) {
+                    differenceFound = true;
+                    offset = i;
+                    length = 1;
+                }
+            } else {
+                if (left.charAt(i) != right.charAt(i)) {
+                    length++;
+                } else {
+                    diff = new Diff();
+                    diff.setOffset(offset);
+                    diff.setLength(length);
+                    diffs.add(diff);
+                    differenceFound = false;
+                }
+            }
+        }
+
+        return diffs;
     }
 
     /**
@@ -63,7 +120,7 @@ public class DiffCalculatorService {
      * @throws DiffNotFoundException If no diff with that id was found.
      * @throws MissingDiffInputException If one of the sides of the diff was not set.
      */
-    public List<Diff> getDiff(String id) throws DiffNotFoundException, MissingDiffInputException {
+    public DiffElement getDiff(String id) throws DiffNotFoundException, MissingDiffInputException {
         DiffElement diffElement = diffElements.get(id);
         if (diffElement == null) {
             throw new DiffNotFoundException(String.format("No diff with id %s was found", id));
@@ -71,21 +128,11 @@ public class DiffCalculatorService {
         if (!diffElement.areBothSidesSet()) {
             throw new MissingDiffInputException("The left and/or right jsons were not specified.");
         }
-        return diffElement.getDiffs();
+        return diffElement;
     }
 
-    /**
-     * Returns the left element of the diff to display in the result json.
-     *
-     * @param id The id of the diff.
-     * @return The input related to that id, null if not found.
-     */
-    public String getLeft(String id) {
-        DiffElement diffElement = diffElements.get(id);
-        if (diffElement == null) {
-            return null;
-        }
-        return diffElement.getLeft();
+    static void setDiffElements(Map<String, DiffElement> diffElements) {
+        DiffCalculatorService.diffElements = diffElements;
     }
 
 }

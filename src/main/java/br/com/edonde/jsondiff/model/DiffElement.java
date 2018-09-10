@@ -12,11 +12,28 @@ public class DiffElement {
         LEFT, RIGHT;
     }
 
+    public enum DiffResult {
+        EQUAL("Equal"), DIFFERENT_SIZES("Different sizes"), DIFFERENT_CONTENTS("Different Contents");
+
+        private String state;
+
+        private DiffResult(String state) {
+            this.state = state;
+        }
+
+        @Override
+        public String toString() {
+            return state;
+        }
+    }
+
     private String id;
 
     private String left;
 
     private String right;
+
+    private DiffResult diffResult;
 
     private List<Diff> diffs;
 
@@ -46,6 +63,14 @@ public class DiffElement {
 
     public void setRight(String right) {
         this.right = right;
+    }
+
+    public DiffResult getDiffResult() {
+        return diffResult;
+    }
+
+    public void setDiffResult(DiffResult diffResult) {
+        this.diffResult = diffResult;
     }
 
     public List<Diff> getDiffs() {

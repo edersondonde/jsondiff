@@ -25,6 +25,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import br.com.edonde.jsondiff.controller.DiffCalculatorService;
 import br.com.edonde.jsondiff.exceptions.DiffNotFoundException;
 import br.com.edonde.jsondiff.exceptions.MissingDiffInputException;
+import br.com.edonde.jsondiff.model.DiffElement;
+import br.com.edonde.jsondiff.model.DiffElement.DiffResult;
 
 /**
  * Test class for {@link DiffController}
@@ -43,6 +45,9 @@ public class DiffControllerTest {
     @Mock
     private DiffCalculatorService diffCalculator;
 
+    @Mock
+    private DiffElement diffElement;
+
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
@@ -59,15 +64,19 @@ public class DiffControllerTest {
     public void testDiffGet() throws Exception {
         Random random = new SecureRandom();
         String id = String.valueOf(random.nextInt(1000));
-        when(diffCalculator.getDiff(id)).thenReturn(new ArrayList<>());
-        when(diffCalculator.getLeft(id)).thenReturn("TestData");
+        when(diffElement.getLeft()).thenReturn("TestData");
+        when(diffElement.getRight()).thenReturn("TestData");
+        when(diffElement.getDiffs()).thenReturn(new ArrayList<>());
+        when(diffElement.getDiffResult()).thenReturn(DiffResult.EQUAL);
+
+        when(diffCalculator.getDiff(id)).thenReturn(diffElement);
 
         diffController.setDiffCalculator(diffCalculator);
 
         mvc.perform(MockMvcRequestBuilders.get("/v1/diff/"+id)
            .accept(MediaType.APPLICATION_JSON))
            .andExpect(status().isOk())
-           .andExpect(content().string(equalTo("{\"id\":\""+id+"\",\"inputLeft\":\"VGVzdERhdGE=\",\"diffs\":[]}")));
+           .andExpect(content().string(equalTo("{\"id\":\""+id+"\",\"inputLeft\":\"VGVzdERhdGE=\",\"inputRight\":\"VGVzdERhdGE=\",\"diffResult\":\"EQUAL\",\"diffs\":[]}")));
     }
 
     /**
