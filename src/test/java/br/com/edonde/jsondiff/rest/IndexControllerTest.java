@@ -15,6 +15,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+/**
+ * Test class for {@link IndexController}
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -23,6 +26,13 @@ public class IndexControllerTest {
     @Autowired
     private MockMvc mvc;
 
+    /**
+     * Given a REST interface<br>
+     * When I send a get request to /<br>
+     * Then I should receive a response with status ok and a help answer.
+     *
+     * @throws Exception if an error happens during request
+     */
     @Test
     public void testGetIndex() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/")

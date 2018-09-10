@@ -14,6 +14,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+/**
+ * Test class for {@link DiffController}
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -22,6 +25,13 @@ public class DiffControllerTest {
     @Autowired
     private MockMvc mvc;
 
+    /**
+     * Given a REST interface<br>
+     * When I send a get request to /v1/diff/&lt;id&gt;<br>
+     * Then I should receive a response with status ok and a dummy answer.
+     *
+     * @throws Exception if an error happens during get request
+     */
     @Test
     public void testDiffGet() throws Exception {
         String id = "id123";
