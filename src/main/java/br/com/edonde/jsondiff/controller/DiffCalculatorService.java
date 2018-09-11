@@ -2,9 +2,7 @@ package br.com.edonde.jsondiff.controller;
 
 import static br.com.edonde.jsondiff.model.DiffElement.Side.LEFT;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
@@ -24,7 +22,7 @@ import br.com.edonde.jsondiff.repository.DiffElementRepository;
  * {@link diffElement} related to that id.
  */
 @Service
-public class DiffCalculatorService {
+public class DiffCalculatorService implements Observer{
 
     @Autowired
     private DiffElementRepository repository;
@@ -40,16 +38,19 @@ public class DiffCalculatorService {
      * @param side Side to be set.
      */
     public void setSide(String id, String json, DiffElement.Side side) {
-        DiffElement diffElement = repository.findById(id).orElse(new DiffElement(id));
+        DiffElement diffElement = repository.findById(id).orElse(createNewDiffElement(id));
         if (LEFT.equals(side)) {
             diffElement.setLeft(json);
         } else {
             diffElement.setRight(json);
         }
-        if (diffElement.areBothSidesSet()) {
-            calculateDiffAsync(diffElement);
-        }
         repository.save(diffElement);
+    }
+
+    private DiffElement createNewDiffElement(String id) {
+        DiffElement diffElement = new DiffElement(id);
+        diffElement.addObserver(this);
+        return diffElement;
     }
 
     /**
@@ -149,8 +150,12 @@ public class DiffCalculatorService {
         return diffElement;
     }
 
-    void setRepository(DiffElementRepository repository) {
-        this.repository = repository;
+    @Override
+    public void update(Observable o, Object arg) {
+        DiffElement diffElement = (DiffElement) o;
+        if (diffElement.areBothSidesSet()) {
+            calculateDiffAsync(diffElement);
+        }
     }
 
 }

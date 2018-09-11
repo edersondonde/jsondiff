@@ -10,6 +10,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -29,6 +30,9 @@ public class DiffCalculatorServiceTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    @InjectMocks
+    private DiffCalculatorService diffCalculatorService;
+
     @Mock
     private DiffElement diffElement;
 
@@ -42,7 +46,6 @@ public class DiffCalculatorServiceTest {
      */
     @Test
     public void testRetrieveDiffResultEqual() {
-        DiffCalculatorService diffCalculatorService = new DiffCalculatorService();
         DiffResult result = diffCalculatorService.retrieveDiffResult("1234", "1234");
         assertThat(result).isEqualTo(DiffResult.EQUAL);
     }
@@ -54,7 +57,6 @@ public class DiffCalculatorServiceTest {
      */
     @Test
     public void testRetrieveDiffResultDifferentSizes() {
-        DiffCalculatorService diffCalculatorService = new DiffCalculatorService();
         DiffResult result = diffCalculatorService.retrieveDiffResult("12345", "1234");
         assertThat(result).isEqualTo(DiffResult.DIFFERENT_SIZES);
     }
@@ -66,7 +68,6 @@ public class DiffCalculatorServiceTest {
      */
     @Test
     public void testRetrieveDiffResultDifferentContents() {
-        DiffCalculatorService diffCalculatorService = new DiffCalculatorService();
         DiffResult result = diffCalculatorService.retrieveDiffResult("1234", "4321");
         assertThat(result).isEqualTo(DiffResult.DIFFERENT_CONTENTS);
     }
@@ -78,7 +79,6 @@ public class DiffCalculatorServiceTest {
      */
     @Test
     public void testCalculateDiffEqualElements() {
-        DiffCalculatorService diffCalculatorService = new DiffCalculatorService();
         List<Diff> result = diffCalculatorService.calculateDiff("1234", "1234");
         assertThat(result).isEmpty();
     }
@@ -90,7 +90,6 @@ public class DiffCalculatorServiceTest {
      */
     @Test
     public void testCalculateDiffDifferentSizeElements() {
-        DiffCalculatorService diffCalculatorService = new DiffCalculatorService();
         List<Diff> result = diffCalculatorService.calculateDiff("12345", "1234");
         assertThat(result).isEmpty();
     }
@@ -102,7 +101,6 @@ public class DiffCalculatorServiceTest {
      */
     @Test
     public void testCalculateDiffDifferentContentElements() {
-        DiffCalculatorService diffCalculatorService = new DiffCalculatorService();
         List<Diff> result = diffCalculatorService.calculateDiff("1234567890", "12ab56cde0");
         assertThat(result).hasSize(2);
 
@@ -129,8 +127,6 @@ public class DiffCalculatorServiceTest {
 
         thrown.expect(DiffNotFoundException.class);
         thrown.expectMessage("No diff with id "+id+" was found");
-        DiffCalculatorService diffCalculatorService = new DiffCalculatorService();
-        diffCalculatorService.setRepository(repository);
         diffCalculatorService.getDiff(id);
     }
 
@@ -152,8 +148,6 @@ public class DiffCalculatorServiceTest {
         thrown.expect(MissingDiffInputException.class);
         thrown.expectMessage("The left and/or right jsons were not specified.");
 
-        DiffCalculatorService diffCalculatorService = new DiffCalculatorService();
-        diffCalculatorService.setRepository(repository);
         diffCalculatorService.getDiff(id);
     }
 
@@ -170,8 +164,6 @@ public class DiffCalculatorServiceTest {
         when(diffElement.areBothSidesSet()).thenReturn(true);
         when(repository.findById(id)).thenReturn(Optional.of(diffElement));
 
-        DiffCalculatorService diffCalculatorService = new DiffCalculatorService();
-        diffCalculatorService.setRepository(repository);
         DiffElement result = diffCalculatorService.getDiff(id);
         assertThat(result).isSameAs(diffElement);
     }

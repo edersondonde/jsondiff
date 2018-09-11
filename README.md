@@ -67,3 +67,11 @@ mvn verify
 ```
 
 This will execute all tests of the project.
+
+## Future Improvements
+
+This project is still in development, and there are some possible improvements:
+
+ - Right now, the data is saved in a Map object, and this can cause problems on memory usage, for example. This can be soled later using a database;
+ - The diff can be improved to ignore whitespaces and focus only on the json itself;
+ - The diff can be improved to diff the json structure, like show different order of parameters, different values for parameters, and so on.

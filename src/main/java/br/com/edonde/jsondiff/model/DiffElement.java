@@ -1,12 +1,13 @@
 package br.com.edonde.jsondiff.model;
 
 import java.util.List;
+import java.util.Observable;
 
 /**
  * Diff element, contains all the structure related to a diff
  * between two inputs.
  */
-public class DiffElement {
+public class DiffElement extends Observable {
 
     public enum Side {
         LEFT, RIGHT;
@@ -55,6 +56,8 @@ public class DiffElement {
 
     public void setLeft(String left) {
         this.left = left;
+        setChanged();
+        notifyObservers();
     }
 
     public String getRight() {
@@ -63,6 +66,8 @@ public class DiffElement {
 
     public void setRight(String right) {
         this.right = right;
+        setChanged();
+        notifyObservers();
     }
 
     public DiffResult getDiffResult() {
