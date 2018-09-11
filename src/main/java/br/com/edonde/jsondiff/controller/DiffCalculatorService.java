@@ -4,6 +4,8 @@ import static br.com.edonde.jsondiff.model.DiffElement.Side.LEFT;
 
 import java.util.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import br.com.edonde.jsondiff.exceptions.DiffNotFoundException;
@@ -22,6 +24,9 @@ import br.com.edonde.jsondiff.model.DiffElement.DiffResult;
 public class DiffCalculatorService {
 
     private static Map<String, DiffElement> diffElements;
+
+    @Autowired
+    private TaskExecutor taskExecutor;
 
     static {
         diffElements = new HashMap<>();
@@ -42,12 +47,24 @@ public class DiffCalculatorService {
             diffElement.setRight(json);
         }
         if (diffElement.areBothSidesSet()) {
+            calculateDiffAsync(diffElement);
+        }
+        diffElements.putIfAbsent(id, diffElement);
+    }
+
+    /**
+     * Executes the diff calculation async, unblocking the input post request.
+     *
+     * @param diffElement The {@link DiffElement} to calculate the diff.
+     */
+    private void calculateDiffAsync(DiffElement diffElement) {
+        taskExecutor.execute(() -> {
             List<Diff> diffs = calculateDiff(diffElement.getLeft(), diffElement.getRight());
             DiffResult diffResult = retrieveDiffResult(diffElement.getLeft(), diffElement.getRight());
             diffElement.setDiffs(diffs);
             diffElement.setDiffResult(diffResult);
-        }
-        diffElements.putIfAbsent(id, diffElement);
+        });
+
     }
 
     /**

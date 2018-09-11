@@ -45,6 +45,11 @@ The diff can return one of three results:
  
 In the last case, a list containing the offset and length of the diff between the inputs is retrieved, on the array `diffs`.
 
+There are some limitations on the diff:
+
+ - Spaces are considered, so `{"a" : "b"}` is different of `{"a":"b"}`;
+ - The diff is made on the complete json, not by parameters. For example, `{"abc":"123"}` and `{"abcd":"23"}` will show that they differ by`":"1` / `d":"`;  
+
 ## Running JsonDiff
 
 JsonDiff uses maven, so you can compile and run the application using:

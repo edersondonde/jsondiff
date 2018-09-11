@@ -16,6 +16,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 
+import br.com.edonde.jsondiff.exceptions.Base64DeserializationException;
+
 /**
  * Test class for {@link Base64Deserializer}
  */
@@ -63,7 +65,7 @@ public class Base64DeserializerTest {
         String invalidBase64String = "Test String";
         when(parser.getValueAsString()).thenReturn(invalidBase64String);
 
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(Base64DeserializationException.class);
 
         Base64Deserializer base64Decoder = new Base64Deserializer();
         base64Decoder.deserialize(parser, context);

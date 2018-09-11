@@ -66,4 +66,23 @@ public class InputControllerTest {
            .andExpect(status().isOk())
            .andExpect(content().string(equalTo(responseContent)));
     }
+
+    /**
+     * Given a REST interface<br>
+     * When I send a post request to /v1/diff/&lt;id&gt;/right with invalid base64 encoded string<br>
+     * Then I should receive an error response with status Bad Request.
+     *
+     * @throws Exception if an error happens during request
+     */
+    @Test
+    public void testInvalidInput() throws Exception {
+        String id = "id123";
+        String invalidContent = "VGVzdERhdE=";
+        String postContent = "{\"inputString\":\""+invalidContent+"\"}";
+        mvc.perform(MockMvcRequestBuilders.post("/v1/diff/"+id+"/right")
+           .content(postContent)
+           .contentType(MediaType.APPLICATION_JSON)
+           .accept(MediaType.APPLICATION_JSON))
+           .andExpect(status().isBadRequest());
+    }
 }
