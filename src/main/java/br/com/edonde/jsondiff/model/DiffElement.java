@@ -82,7 +82,7 @@ public class DiffElement {
     }
 
     public boolean areBothSidesSet() {
-        return left != null && right != null;
+        return getLeft() != null && getRight() != null;
     }
 
 }

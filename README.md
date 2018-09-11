@@ -44,3 +44,21 @@ The diff can return one of three results:
  - DIFFRENTE_CONTENTS - The inputs have the same size, however different content.
  
 In the last case, a list containing the offset and length of the diff between the inputs is retrieved, on the array `diffs`.
+
+## Running JsonDiff
+
+JsonDiff uses maven, so you can compile and run the application using:
+
+```
+mvn package && mvn exec:java
+```
+
+This will compile, run unit tests, package the jar file and run the application.
+
+To run the tests (unit and integration tests), you can run:
+
+```
+mvn verify
+```
+
+This will execute all tests of the project.

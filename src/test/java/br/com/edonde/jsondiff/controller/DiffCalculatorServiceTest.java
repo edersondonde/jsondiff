@@ -129,15 +129,15 @@ public class DiffCalculatorServiceTest {
 
     /**
      * Given DiffCalculatorService<br>
-     * When I call getDiff for an element missing right input<br>
+     * When I call getDiff for an element missing inputs<br>
      * Then {@link MissingDiffInputException} shall be thrown.
      */
     @Test
-    public void testGetDiffWithRightInputNotSet() {
+    public void testGetDiffWithInputsNotSet() {
         Random random = new SecureRandom();
         String id = String.valueOf(random.nextInt(1000));
 
-        when(diffElement.getLeft()).thenReturn("1234");
+        when(diffElement.areBothSidesSet()).thenReturn(false);
         Map<String, DiffElement> diffElements = new HashMap<>();
         diffElements.put(id, diffElement);
 
@@ -159,8 +159,7 @@ public class DiffCalculatorServiceTest {
         Random random = new SecureRandom();
         String id = String.valueOf(random.nextInt(1000));
 
-        when(diffElement.getLeft()).thenReturn("1234");
-        when(diffElement.getRight()).thenReturn("1234");
+        when(diffElement.areBothSidesSet()).thenReturn(true);
         Map<String, DiffElement> diffElements = new HashMap<>();
         diffElements.put(id, diffElement);
 
