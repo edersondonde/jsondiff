@@ -18,6 +18,7 @@ import br.com.edonde.jsondiff.exceptions.MissingDiffInputException;
 import br.com.edonde.jsondiff.model.Diff;
 import br.com.edonde.jsondiff.model.DiffElement;
 import br.com.edonde.jsondiff.model.DiffElement.DiffResult;
+import br.com.edonde.jsondiff.repository.DiffElementRepository;
 
 /**
  * Test class for {@link DiffCalculatorService}
@@ -30,6 +31,9 @@ public class DiffCalculatorServiceTest {
 
     @Mock
     private DiffElement diffElement;
+
+    @Mock
+    private DiffElementRepository repository;
 
     /**
      * Given DiffCalculatorService<br>
@@ -121,9 +125,12 @@ public class DiffCalculatorServiceTest {
         Random random = new SecureRandom();
         String id = String.valueOf(random.nextInt(1000));
 
+        when(repository.findById(id)).thenReturn(Optional.ofNullable(null));
+
         thrown.expect(DiffNotFoundException.class);
         thrown.expectMessage("No diff with id "+id+" was found");
         DiffCalculatorService diffCalculatorService = new DiffCalculatorService();
+        diffCalculatorService.setRepository(repository);
         diffCalculatorService.getDiff(id);
     }
 
@@ -138,6 +145,7 @@ public class DiffCalculatorServiceTest {
         String id = String.valueOf(random.nextInt(1000));
 
         when(diffElement.areBothSidesSet()).thenReturn(false);
+        when(repository.findById(id)).thenReturn(Optional.of(diffElement));
         Map<String, DiffElement> diffElements = new HashMap<>();
         diffElements.put(id, diffElement);
 
@@ -145,7 +153,7 @@ public class DiffCalculatorServiceTest {
         thrown.expectMessage("The left and/or right jsons were not specified.");
 
         DiffCalculatorService diffCalculatorService = new DiffCalculatorService();
-        DiffCalculatorService.setDiffElements(diffElements);
+        diffCalculatorService.setRepository(repository);
         diffCalculatorService.getDiff(id);
     }
 
@@ -160,11 +168,10 @@ public class DiffCalculatorServiceTest {
         String id = String.valueOf(random.nextInt(1000));
 
         when(diffElement.areBothSidesSet()).thenReturn(true);
-        Map<String, DiffElement> diffElements = new HashMap<>();
-        diffElements.put(id, diffElement);
+        when(repository.findById(id)).thenReturn(Optional.of(diffElement));
 
         DiffCalculatorService diffCalculatorService = new DiffCalculatorService();
-        DiffCalculatorService.setDiffElements(diffElements);
+        diffCalculatorService.setRepository(repository);
         DiffElement result = diffCalculatorService.getDiff(id);
         assertThat(result).isSameAs(diffElement);
     }

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-JsonDiff is a Java application based on SpringBoot that calculates the difference between two jsons Strings Base64 encoded received via REST interfaces. The difference is then calculate and returned.
+JsonDiff is a Java application based on SpringBoot that calculates the difference between two jsons Strings Base64 encoded received via REST interfaces. The difference is then calculated and returned.
 
 ## Usage
 

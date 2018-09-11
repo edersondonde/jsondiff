@@ -1,5 +1,6 @@
 package br.com.edonde.jsondiff.rest;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class DiffController {
     @Autowired
     private DiffCalculatorService diffCalculator;
 
-    @RequestMapping(value="/v1/diff/{id}", method=GET)
+    @RequestMapping(value="/v1/diff/{id}", method=GET, produces=APPLICATION_JSON_VALUE)
     public Response getDiffResult(@PathVariable String id) {
         DiffElement diff = diffCalculator.getDiff(id);
         Response response = new Response();

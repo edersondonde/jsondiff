@@ -1,5 +1,8 @@
 package br.com.edonde.jsondiff.model;
 
+/**
+ * Diff element, contains the offset and length of the difference between the jsons.
+ */
 public class Diff {
 
     private int offset;

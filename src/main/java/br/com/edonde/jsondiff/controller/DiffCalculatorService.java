@@ -2,7 +2,9 @@ package br.com.edonde.jsondiff.controller;
 
 import static br.com.edonde.jsondiff.model.DiffElement.Side.LEFT;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
@@ -13,6 +15,7 @@ import br.com.edonde.jsondiff.exceptions.MissingDiffInputException;
 import br.com.edonde.jsondiff.model.Diff;
 import br.com.edonde.jsondiff.model.DiffElement;
 import br.com.edonde.jsondiff.model.DiffElement.DiffResult;
+import br.com.edonde.jsondiff.repository.DiffElementRepository;
 
 /**
  * Main class to process the differences between the inputs.
@@ -23,14 +26,11 @@ import br.com.edonde.jsondiff.model.DiffElement.DiffResult;
 @Service
 public class DiffCalculatorService {
 
-    private static Map<String, DiffElement> diffElements;
+    @Autowired
+    private DiffElementRepository repository;
 
     @Autowired
     private TaskExecutor taskExecutor;
-
-    static {
-        diffElements = new HashMap<>();
-    }
 
     /**
      * Sets the json on one of the sides of the diff.
@@ -40,7 +40,7 @@ public class DiffCalculatorService {
      * @param side Side to be set.
      */
     public void setSide(String id, String json, DiffElement.Side side) {
-        DiffElement diffElement = diffElements.getOrDefault(id, new DiffElement(id));
+        DiffElement diffElement = repository.findById(id).orElse(new DiffElement(id));
         if (LEFT.equals(side)) {
             diffElement.setLeft(json);
         } else {
@@ -49,7 +49,7 @@ public class DiffCalculatorService {
         if (diffElement.areBothSidesSet()) {
             calculateDiffAsync(diffElement);
         }
-        diffElements.putIfAbsent(id, diffElement);
+        repository.save(diffElement);
     }
 
     /**
@@ -138,18 +138,19 @@ public class DiffCalculatorService {
      * @throws MissingDiffInputException If one of the sides of the diff was not set.
      */
     public DiffElement getDiff(String id) throws DiffNotFoundException, MissingDiffInputException {
-        DiffElement diffElement = diffElements.get(id);
-        if (diffElement == null) {
+        Optional<DiffElement> optionalDiffElement = repository.findById(id);
+        if (!optionalDiffElement.isPresent()) {
             throw new DiffNotFoundException(String.format("No diff with id %s was found", id));
         }
+        DiffElement diffElement = optionalDiffElement.get();
         if (!diffElement.areBothSidesSet()) {
             throw new MissingDiffInputException("The left and/or right jsons were not specified.");
         }
         return diffElement;
     }
 
-    static void setDiffElements(Map<String, DiffElement> diffElements) {
-        DiffCalculatorService.diffElements = diffElements;
+    void setRepository(DiffElementRepository repository) {
+        this.repository = repository;
     }
 
 }
