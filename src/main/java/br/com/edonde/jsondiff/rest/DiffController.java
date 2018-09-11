@@ -24,8 +24,19 @@ public class DiffController {
     @RequestMapping(value="/v1/diff/{id}", method=GET, produces=APPLICATION_JSON_VALUE)
     public Response getDiffResult(@PathVariable String id) {
         DiffElement diff = diffCalculator.getDiff(id);
+        Response response = generateResponse(diff);
+        return response;
+    }
+
+    /**
+     * Generates the response to the request
+     *
+     * @param diff The diff object that the response is based on.
+     * @return The populated Response object.
+     */
+    private Response generateResponse(DiffElement diff) {
         Response response = new Response();
-        response.setId(id);
+        response.setId(diff.getId());
         response.setInputLeft(diff.getLeft());
         response.setInputRight(diff.getRight());
         response.setDiffs(diff.getDiffs());

@@ -13,7 +13,7 @@ import br.com.edonde.jsondiff.model.DiffElement;
 import br.com.edonde.jsondiff.model.Request;
 
 /**
- * Input Controller, responsiblle to receive the base64 jsons for diff.
+ * Input Controller, responsible to receive the base64 jsons for diff.
  */
 @RestController
 public class InputController {

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import br.com.edonde.jsondiff.model.DiffElement;
 
 /**
- * Configurator class for the {@link DiffElement} map
+ * Configuration class for the {@link DiffElement} map
  */
 @Configuration
 public class DiffElementMap {

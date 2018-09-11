@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class Base64DeserializationException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     public Base64DeserializationException(String message) {
         super(message);
     }
